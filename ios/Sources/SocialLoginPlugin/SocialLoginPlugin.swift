@@ -2,10 +2,6 @@ import Foundation
 import Capacitor
 import AuthenticationServices
 
-#if canImport(FBSDKLoginKit)
-import FBSDKLoginKit
-#endif
-
 #if canImport(GoogleSignIn)
 import GoogleSignIn
 #endif
@@ -50,11 +46,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
     private let apple: AppleProvider? = nil
     #endif
 
-    #if canImport(FBSDKLoginKit)
     private let facebook = FacebookProvider()
-    #else
-    private let facebook: FacebookProvider? = nil
-    #endif
 
     #if canImport(GoogleSignIn)
     private let google = GoogleProvider()
@@ -66,13 +58,9 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
     private let oauth2 = OAuth2Provider()
     private var openSecureWindowCall: CAPPluginCall?
 
-    // Helper to get Facebook provider (returns nil if unavailable)
-    private var facebookProvider: FacebookProvider? {
-        #if canImport(FBSDKLoginKit)
+    // Helper to get Facebook provider (always returns stub)
+    private var facebookProvider: FacebookProvider {
         return facebook
-        #else
-        return nil
-        #endif
     }
 
     // Helper to get Google provider (returns nil if unavailable)
@@ -134,11 +122,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
             return false
             #endif
         case "facebook":
-            #if canImport(FBSDKLoginKit)
-            return true
-            #else
             return false
-            #endif
         case "google":
             #if canImport(GoogleSignIn)
             return true
@@ -162,13 +146,8 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
 
         if let facebookSettings = call.getObject("facebook") {
             if facebookSettings["appId"] is String {
-                // Check if Facebook dependencies are available
-                guard let fbProvider = facebookProvider else {
-                    call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                    return
-                }
-                fbProvider.initialize()
-                initialized = true
+                call.reject("Facebook provider is disabled in this fork")
+                return
             }
         }
 
@@ -292,25 +271,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         }
         case "facebook": do {
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            fbProvider.getAuthorizationCode { res in
-                do {
-                    let result = try res.get()
-                    var response: [String: String] = [:]
-                    if let accessToken = result.accessToken {
-                        response["accessToken"] = accessToken
-                    }
-                    if let jwt = result.jwt {
-                        response["jwt"] = jwt
-                    }
-                    call.resolve(response)
-                } catch {
-                    call.reject(error.localizedDescription)
-                }
-            }
+            call.reject("Facebook provider is disabled in this fork")
         }
         case "twitter": do {
             self.twitter.getAuthorizationCode { res in
@@ -398,11 +359,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         }
         case "facebook": do {
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            call.resolve([ "isLoggedIn": fbProvider.isLoggedIn() ])
+            call.reject("Facebook provider is disabled in this fork")
         }
         case "twitter": do {
             self.twitter.isLoggedIn { res in
@@ -442,13 +399,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
 
         switch provider {
         case "facebook":
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            fbProvider.login(payload: payload) { (result: Result<FacebookLoginResponse, Error>) in
-                self.handleLoginResult(result, call: call)
-            }
+            call.reject("Facebook provider is disabled in this fork")
         case "google":
             guard let gProvider = googleProvider else {
                 call.reject("Google Sign-In provider is disabled. Dependencies are not available. Ensure Google Sign-In dependencies are included in your Podfile")
@@ -489,40 +440,9 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         switch customCall {
         case "facebook#getProfile":
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            guard let options = call.getObject("options") else {
-                call.reject("options are required")
-                return
-            }
-            guard let fields = options["fields"] as? [String] else {
-                call.reject("options are required")
-                return
-            }
-
-            fbProvider.getProfile(fields: fields, completion: { res in
-                switch res {
-                case .success(let profile):
-                    call.resolve(["profile": profile as Any])
-                case .failure(let error):
-                    call.reject(error.localizedDescription)
-                }
-            })
+            call.reject("Facebook provider is disabled in this fork")
         case "facebook#requestTracking":
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            fbProvider.requestTracking(completion: { res in
-                switch res {
-                case .success(let status):
-                    call.resolve(["status": status])
-                case .failure(let error):
-                    call.reject(error.localizedDescription)
-                }
-            })
+            call.reject("Facebook provider is disabled in this fork")
         default:
             call.reject("Invalid call. Supported calls: facebook#getProfile, facebook#requestTracking")
         }
@@ -536,13 +456,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
 
         switch provider {
         case "facebook":
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            fbProvider.logout { result in
-                self.handleLogoutResult(result, call: call)
-            }
+            call.reject("Facebook provider is disabled in this fork")
         case "google":
             guard let gProvider = googleProvider else {
                 call.reject("Google Sign-In provider is disabled. Dependencies are not available. Ensure Google Sign-In dependencies are included in your Podfile")
@@ -584,13 +498,7 @@ public class SocialLoginPlugin: CAPPlugin, CAPBridgedPlugin {
 
         switch provider {
         case "facebook":
-            guard let fbProvider = facebookProvider else {
-                call.reject("Facebook provider is disabled. Dependencies are not available. Ensure Facebook Login dependencies are included in your Podfile")
-                return
-            }
-            fbProvider.refresh(viewController: self.bridge?.viewController) { result in
-                self.handleRefreshResult(result, call: call)
-            }
+            call.reject("Facebook provider is disabled in this fork")
         case "google":
             guard let gProvider = googleProvider else {
                 call.reject("Google Sign-In provider is disabled. Dependencies are not available. Ensure Google Sign-In dependencies are included in your Podfile")

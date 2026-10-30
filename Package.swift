@@ -11,8 +11,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", from: "8.0.0"),
-        // FBSDKCoreKit and FBSDKLoginKit
-        .package(url: "https://github.com/facebook/facebook-ios-sdk.git", .upToNextMajor(from: "18.0.3")),
         // Add Google Sign-In dependency
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", .upToNextMajor(from: "9.0.0")),
         // Alamofire
@@ -24,8 +22,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm"),
-                .product(name: "FacebookCore", package: "facebook-ios-sdk"),
-                .product(name: "FacebookLogin", package: "facebook-ios-sdk"),
                 .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
                 .product(name: "Alamofire", package: "Alamofire")
             ],
