@@ -1,3 +1,5 @@
+> **Roach Coach modified version.** This is Roach Coach's public fork of [Cap-go/capacitor-social-login](https://github.com/Cap-go/capacitor-social-login) at upstream tag `8.3.38`, published so the source of the modified plugin is available under the MPL-2.0. The changes (Facebook Login removed) live on the `roachcoach` branch; see [NOTICE](NOTICE).
+
 # @capgo/capacitor-social-login
 <a href="https://capgo.app/"><img src="https://capgo.app/readme-banner.svg?repo=Cap-go/capacitor-social-login" alt="Capgo - Instant updates for Capacitor" /></a>
 

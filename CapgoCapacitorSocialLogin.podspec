@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MPL-2.0
 require 'json'
 
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
